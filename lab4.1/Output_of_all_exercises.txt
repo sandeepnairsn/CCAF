@@ -1,0 +1,61 @@
+ascen_ai_s4@junaipin-student-vm-4:~/Sandeep-CCAF/CCAF/CCAF/lab4.1$ python3 exercise_1_explicit_criteria.py  
+Model: claude-sonnet-4-6 
+
+=== VAGUE prompt === 
+[OK ] gold=remove pred=remove | A user posted another member's home address and  
+[OK ] gold=remove pred=remove | A member wrote a credible threat of violence nam 
+[OK ] gold=remove pred=remove | A post shares a screenshot exposing a private pe 
+[XX ] gold=allow  pred=review | A member called someone's argument 'completely s 
+[OK ] gold=allow  pred=allow  | A user disagreed strongly but politely with a mo 
+[OK ] gold=allow  pred=allow  | A slightly off-topic reply in a discussion threa 
+[XX ] gold=review pred=remove | A user keeps posting the same 'Buy crypto here!' 
+[XX ] gold=review pred=allow  | Several members report a heated but on-topic pol 
+--> accuracy 5/8, wrongful 'remove' calls: 1 
+
+=== EXPLICIT prompt === 
+[OK ] gold=remove pred=remove | A user posted another member's home address and  
+[OK ] gold=remove pred=remove | A member wrote a credible threat of violence nam 
+[OK ] gold=remove pred=remove | A post shares a screenshot exposing a private pe 
+[OK ] gold=allow  pred=allow  | A member called someone's argument 'completely s 
+[OK ] gold=allow  pred=allow  | A user disagreed strongly but politely with a mo 
+[OK ] gold=allow  pred=allow  | A slightly off-topic reply in a discussion threa 
+[OK ] gold=review pred=review | A user keeps posting the same 'Buy crypto here!' 
+[XX ] gold=review pred=allow  | Several members report a heated but on-topic pol 
+--> accuracy 7/8, wrongful 'remove' calls: 0 
+ascen_ai_s4@junaipin-student-vm-4:~/Sandeep-CCAF/CCAF/CCAF/lab4.1$ python3 exercise_2_few_shot.py  
+Model: claude-sonnet-4-6 
+
+=== ZERO-SHOT === 
+[OK ] 'REMOVE | Sharing private messages and personal identifying information without consent is a serious privacy violation that requires immediate removal
+.' 
+[OK ] 'REVIEW | Borderline case — "your take is garbage" targets the idea rather than the person directly, but it\'s dismissive and uncivil enough to warran
+t human review before deciding whether it violates community standards.' 
+[OK ] 'REMOVE | Spamming identical affiliate links across multiple threads in rapid succession is clear coordinated spam behavior that warrants immediate re
+moval.' 
+[OK ] 'REVIEW | Escalating personal exchanges can quickly cross into harassment; human moderator should assess tone and trajectory before it intensifies.' 
+--> 4/4 matched the exact format 
+
+=== FEW-SHOT === 
+[OK ] 'REMOVE | Doxxing - exposes private personal information (real name and private messages) without consent.' 
+[OK ] 'ALLOW | Harsh but directed at the idea/take, not a personal attack on the individual.' 
+[OK ] 'REMOVE | Clear spam behavior - automated or deliberate mass posting of affiliate links violates anti-spam policy.' 
+[OK ] 'REVIEW | Escalating personal exchanges may cross into harassment, warranting human judgment.' 
+--> 4/4 matched the exact format 
+ascen_ai_s4@junaipin-student-vm-4:~/Sandeep-CCAF/CCAF/CCAF/lab4.1$ python3 exercise_3_generalization.py  
+Model: claude-sonnet-4-6 
+
+[OK ] expected=allow (tests: boring is not a violation) 
+     ALLOW | Off-topic but harmless content; merely boring or unsolicited, not a policy violation. 
+
+[OK ] expected=allow (tests: public/official info is not doxxing) 
+     ALLOW | The company's official press-office phone number is already-public/official information, not doxxing. 
+
+[OK ] expected=remove (tests: doxxing regardless of stated intent) 
+     REMOVE | Doxxing of a private individual's home address regardless of stated joking intent, which principles explicitly state does not excuse the viol
+ation. 
+
+[XX ] expected=review (tests: ambiguous threat in playful context needs a human) 
+     ALLOW | Casual competitive trash talk in a gaming context, clearly not a credible threat. 
+
+--> 3/4 edge cases generalized correctly 
+ascen_ai_s4@junaipin-student-vm-4:~/Sandeep-CCAF/CCAF/CCAF/lab4.1$
