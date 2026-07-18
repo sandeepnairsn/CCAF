@@ -74,7 +74,13 @@ TOOLS = [
 #
 # It is a plain string. Replace the placeholder below with your prompt.
 # =====================================================================
-SYSTEM_BASE = "TODO: write the system prompt - see the TODO above."
+SYSTEM_BASE = ( 
+    "You are a helpful support agent for an online retail company. "
+    "Be concise. If a request is ambiguous (e.g. the customer has multiple "
+    "open orders and didn't specify which), ASK a clarifying question " 
+    "instead of guessing. Always rely on the [CASE FACTS] block - those " 
+    "values are authoritative and you do not need to ask for them again." 
+    )
 
 
 def run_tool(name: str, args: dict) -> str:

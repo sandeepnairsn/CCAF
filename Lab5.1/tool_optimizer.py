@@ -17,6 +17,14 @@ def optimize(tool_name: str, raw_result):
     Unknown tools pass through untouched (consider logging a warning in
     production so unconfigured tools don't sneak past).
     """
+    keep = RELEVANT_FIELDS.get(tool_name) 
+    if keep is None: 
+        return raw_result # no rule — pass through (consider logging) 
+    if isinstance(raw_result, list): 
+        return [{k: row[k] for k in keep if k in row} for row in raw_result] 
+    if isinstance(raw_result, dict): 
+        return {k: raw_result[k] for k in keep if k in raw_result} 
+    return raw_result
     # =====================================================================
     # TODO (Demo 2 - Optimization): trim raw_result to the whitelisted fields.
     #
@@ -31,4 +39,4 @@ def optimize(tool_name: str, raw_result):
     #
     # Keep the SAME shape it came in (list stays a list, dict stays a dict).
     # =====================================================================
-    raise NotImplementedError("Implement optimize() - see the TODO above.")
+    #raise NotImplementedError("Implement optimize() - see the TODO above.")

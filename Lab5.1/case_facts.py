@@ -21,6 +21,12 @@ class CaseFacts:
         every turn. Keep it short - every token here is paid for on every
         API call.
         """
+        if not self._facts: 
+            return "" 
+        lines = ["[CASE FACTS - these are confirmed and must be preserved]"] 
+        for k, v in self._facts.items(): 
+            lines.append(f"- {k}: {v}") 
+        return "\n".join(lines)
         # =================================================================
         # TODO (Demo 1 - Preservation): render the pinned facts.
         #
@@ -38,4 +44,4 @@ class CaseFacts:
         # This block is what gets appended to the system prompt on EVERY
         # messages.create() call, so the model never loses these values.
         # =================================================================
-        raise NotImplementedError("Implement as_system_block() - see the TODO above.")
+        #raise NotImplementedError("Implement as_system_block() - see the TODO above.")
