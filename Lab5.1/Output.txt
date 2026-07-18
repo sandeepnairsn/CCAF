@@ -1,0 +1,149 @@
+ascen_ai_s4@junaipin-student-vm-4:~/Sandeep-CCAF/CCAF/CCAF/Lab5.1$ python3 main.py 
+
+====================================================================== 
+DEMO 1: Case facts survive long sessions 
+====================================================================== 
+
+USER : Hi, what are your store hours? 
+AGENT: Our store hours are: 
+
+- **Monday – Friday:** 9:00 AM – 8:00 PM 
+- **Saturday:** 10:00 AM – 6:00 PM 
+- **Sunday:** 11:00 AM – 5:00 PM 
+
+Is there anything else I can help you with, Aarti? 
+
+USER : Do you ship to Hyderabad? 
+AGENT: Yes, we do ship to Hyderabad! As a **Gold tier** member, you also enjoy benefits like priority shipping and exclusive offers. 
+
+Is there anything else I can help you with? 
+
+USER : What payment methods do you accept? 
+AGENT: We accept the following payment methods: 
+
+- **Credit/Debit Cards** (Visa, Mastercard, American Express, RuPay) 
+- **Net Banking** 
+- **UPI** (Google Pay, PhonePe, Paytm, etc.) 
+- **Wallets** (Paytm, Amazon Pay, etc.) 
+- **EMI** (on select cards) 
+- **Cash on Delivery** (available in select locations) 
+
+Is there anything else I can help you with, Aarti? 
+
+USER : Quick check: what is my customer ID and what tier am I? 
+AGENT: Based on our records: 
+
+- **Customer ID:** C-1001 
+- **Tier:** Gold 
+
+Is there anything else I can help you with, Aarti? 
+
+====================================================================== 
+DEMO 2: Bulky tool output is trimmed before it reaches the model 
+====================================================================== 
+
+RAW tool output (what a naive agent would paste): 
+[ 
+ { 
+   "order_id": "O-9001", 
+   "customer_id": "C-1001", 
+   "status": "Delivered", 
+   "total": 1499.0, 
+   "placed_on": "2026-05-12", 
+   "items": [ 
+     { 
+       "sku": "SKU-AAA", 
+       "name": "Bluetooth Headphones", 
+       "qty": 1 
+     } 
+   ] 
+ }, 
+ { 
+   "order_id": "O-9002", 
+   "customer_id": "C-1001", 
+   "status": "Shipped", 
+   "total": 2799.0, 
+   "placed_on": "2026-06-15", 
+   "items": [ 
+     { 
+       "sku": "SKU-BBB", 
+       "name": "Smart Watch", 
+       "qty": 1 
+     } 
+   ] 
+ }, 
+ { 
+   "order_id": "O-9003", 
+   "customer_id": "C-1001", 
+   "status": "Processing", 
+   "total": 549.0, 
+   "placed_on": "2026-06-18", 
+   "items": [ 
+     { 
+       "sku": "SKU-CCC", 
+       "name": "Phone Case", 
+       "qty": 2 
+     } 
+   ] 
+ } 
+] 
+
+OPTIMIZED output (what actually reaches the model): 
+[ 
+ { 
+   "order_id": "O-9001", 
+   "status": "Delivered", 
+   "placed_on": "2026-05-12", 
+   "total": 1499.0 
+ }, 
+ { 
+   "order_id": "O-9002", 
+   "status": "Shipped", 
+   "placed_on": "2026-06-15", 
+   "total": 2799.0 
+ }, 
+ { 
+   "order_id": "O-9003", 
+   "status": "Processing", 
+   "placed_on": "2026-06-18", 
+   "total": 549.0 
+ } 
+] 
+
+Now let the agent actually use it ↓ 
+  [tool call] lookup_orders({'customer_id': 'C-1001'}) 
+  [optimized result] [{"order_id": "O-9001", "status": "Delivered", "placed_on": "2026-05-12", "total": 1499.0}, {"order_id": "O-9002", "status": "Shipped"
+, "placed_on": "2026-06-15", "total": 2799.0}, {"order_id": "O-9003", "status": "Processing", "placed_on": "2026-06-18", "total": 549.0}] 
+AGENT: Here are your orders: 
+
+| Order ID | Status | Total | 
+|----------|------------|-----------| 
+| O-9001 | Delivered | $1,499.00 | 
+| O-9002 | Shipped | $2,799.00 | 
+| O-9003 | Processing | $549.00 | 
+
+Let me know if you need more details on any of these! 
+
+====================================================================== 
+DEMO 3: Ambiguous request triggers a clarifying question 
+====================================================================== 
+
+Customer has 2 open orders: ['O-9002', 'O-9003'] 
+They are about to say 'cancel my order' without specifying which. 
+A good agent must ASK, not guess. 
+
+  [tool call] lookup_orders({'customer_id': 'C-1001'}) 
+  [optimized result] [{"order_id": "O-9001", "status": "Delivered", "placed_on": "2026-05-12", "total": 1499.0}, {"order_id": "O-9002", "status": "Shipped"
+, "placed_on": "2026-06-15", "total": 2799.0}, {"order_id": "O-9003", "status": "Processing", "placed_on": "2026-06-18", "total": 549.0}] 
+AGENT: You have two potentially active orders: 
+
+1. **O-9002** – Shipped | Placed: Jun 15, 2026 | Total: $2,799.00 
+2. **O-9003** – Processing | Placed: Jun 18, 2026 | Total: $549.00 
+
+Which order would you like to cancel? 
+
+^ Notice the agent asked which order rather than picking one. 
+
+All demos done. Read the printed output above to see the techniques in action. 
+ascen_ai_s4@junaipin-student-vm-4:~/Sandeep-CCAF/CCAF/CCAF/Lab5.1$
+
