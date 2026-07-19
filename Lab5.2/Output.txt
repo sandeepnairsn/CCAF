@@ -1,0 +1,138 @@
+ascen_ai_s4@junaipin-student-vm-4:~/Sandeep-CCAF/CCAF/CCAF/Lab5.2$ python3 main.py 
+Pipeline starting. State file: scratchpad.json 
+
+[CLAIM CLM-001] [CLAIM CLM-002] [CLAIM CLM-003]  
+------------------------------------------------------------ 
+SUMMARY  done: 2   failed: 1   skipped: 0 
+Open scratchpad.json to inspect every finding. 
+------------------------------------------------------------ 
+ascen_ai_s4@junaipin-student-vm-4:~/Sandeep-CCAF/CCAF/CCAF/Lab5.2$ cat scratchpad.json  
+{ 
+ "CLM-001": { 
+   "status": "done", 
+   "findings": [ 
+     { 
+       "stage": "intake", 
+       "payload": { 
+         "stage": "intake", 
+         "ok": true, 
+         "data": { 
+           "claim_id": "CLM-001", 
+           "member_id": "M-501", 
+           "procedure_code": "99213", 
+           "amount": 120.0, 
+           "summary": "Routine office visit for mild fever" 
+         }, 
+         "error": null 
+       } 
+     }, 
+     { 
+       "stage": "validation", 
+       "payload": { 
+         "stage": "validation", 
+         "ok": true, 
+         "data": { 
+           "checks_passed": true 
+         }, 
+         "error": null 
+       } 
+     }, 
+     { 
+       "stage": "adjudication", 
+       "payload": { 
+         "stage": "adjudication", 
+         "ok": true, 
+         "data": { 
+           "decision": "approved", 
+           "amount": 120.0 
+         }, 
+         "error": null 
+       } 
+     } 
+   ] 
+ }, 
+ "CLM-002": { 
+   "status": "failed", 
+   "findings": [ 
+     { 
+       "stage": "intake", 
+       "payload": { 
+         "stage": "intake", 
+         "ok": true, 
+         "data": { 
+           "claim_id": "CLM-002", 
+           "member_id": "M-777", 
+           "procedure_code": "70551", 
+           "amount": 850.0, 
+           "summary": "MRI scan of the brain following persistent headaches" 
+         }, 
+         "error": null 
+       } 
+     }, 
+     { 
+       "stage": "validation", 
+       "payload": { 
+         "stage": "validation", 
+         "ok": false, 
+         "data": null, 
+         "error": "member_not_active" 
+       } 
+     } 
+   ], 
+   "failure_reason": "validation: member_not_active" 
+ }, 
+ "CLM-003": { 
+   "status": "done", 
+   "findings": [ 
+     { 
+       "stage": "intake", 
+       "payload": { 
+         "stage": "intake", 
+         "ok": true, 
+         "data": { 
+           "claim_id": "CLM-003", 
+           "member_id": "M-501", 
+           "procedure_code": "93000", 
+           "amount": 95.0, 
+           "summary": "Electrocardiogram performed during cardiology consult" 
+         }, 
+         "error": null 
+       } 
+     }, 
+     { 
+       "stage": "validation", 
+       "payload": { 
+         "stage": "validation", 
+         "ok": true, 
+         "data": { 
+           "checks_passed": true 
+         }, 
+         "error": null 
+       } 
+     }, 
+     { 
+       "stage": "adjudication", 
+       "payload": { 
+         "stage": "adjudication", 
+         "ok": true, 
+         "data": { 
+           "decision": "approved", 
+           "amount": 95.0 
+         }, 
+         "error": null 
+       } 
+     } 
+   ] 
+ } 
+}ascen_ai_s4@junaipin-student-vm-4:~/Sandeep-CCAF/CCAF/CCAF/Lab5.2$ python3 main.py 
+Pipeline starting. State file: scratchpad.json 
+
+[CLAIM CLM-001] (already done, skipping) 
+[CLAIM CLM-002] (already failed, skipping) 
+[CLAIM CLM-003] (already done, skipping) 
+
+------------------------------------------------------------ 
+SUMMARY  done: 0   failed: 0   skipped: 3 
+Open scratchpad.json to inspect every finding. 
+------------------------------------------------------------ 
+ascen_ai_s4@junaipin-student-vm-4:~/Sandeep-CCAF/CCAF/CCAF/Lab5.2$
