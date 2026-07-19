@@ -119,6 +119,14 @@ def run_validation(claim: dict) -> StageResult:
 
 def run_adjudication(claim: dict) -> StageResult:
     """Approve small claims, hold large ones for human review."""
+    amount = claim.get("amount", 0)
+    if amount < 500:
+        decision = "approved"
+    elif amount < 5000:
+        decision = "hold_for_review"
+    else:
+        decision = "denied"
+    return StageResult(stage="adjudication",ok=True,data={"decision": decision, "amount": amount})
     # =====================================================================
     # TODO (Demo 1, subagent 3 of 3): adjudication - deterministic decision.
     #   amount = claim.get("amount", 0)
@@ -128,4 +136,4 @@ def run_adjudication(claim: dict) -> StageResult:
     # Return StageResult(stage="adjudication", ok=True,
     #                    data={"decision": decision, "amount": amount})
     # =====================================================================
-    raise NotImplementedError("Implement run_adjudication() - see the TODO above.")
+    #raise NotImplementedError("Implement run_adjudication() - see the TODO above.")
