@@ -20,6 +20,7 @@ raise into the coordinator.
 
 import json
 import os
+import re
 from dataclasses import dataclass, asdict
 from typing import Any
 
@@ -63,6 +64,7 @@ def run_intake(claim: dict) -> StageResult:
         ) 
         text = "".join(b.text for b in response.content if b.type == "text").strip() 
         # be forgiving about ```json fences
+        text = re.sub(r"^```(?:json)?\s*|\s*```$", "", text.strip())
         parsed = json.loads(text) 
         return StageResult(stage="intake", ok=True, data=parsed) 
     except Exception as exc: 

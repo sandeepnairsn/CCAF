@@ -91,7 +91,6 @@ def main():
             print(f"[CLAIM {claim['claim_id']}] (already {status}, skipping)") 
             skipped_count += 1 
             continue 
-        final = process_claim(claim, pad)
         # =================================================================
         # TODO (Demo 3, part 2 of 2): crash-recovery skip rule.
         # If this claim is already finished, skip it and count it:
@@ -100,7 +99,6 @@ def main():
         #       skipped_count += 1
         #       continue
         # =================================================================
-
         final = process_claim(claim, pad)
         if final == "done":
             done_count += 1
