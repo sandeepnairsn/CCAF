@@ -48,6 +48,11 @@ class Scratchpad:
 
     def log(self, claim_id: str, stage: str, payload) -> None:
         """Record what happened in a given stage for a given claim."""
+        entry = self._data.setdefault(claim_id, {"status": "in_progress", "findings": []}) 
+        entry["findings"].append({"stage": stage, "payload": payload}) 
+        self._flush() 
+    def _flush(self) -> None: 
+        self.path.write_text(json.dumps(self._data, indent=2))
         # =================================================================
         # TODO (Demo 2): append a {stage, payload} record to this claim's
         # findings list, then flush.
@@ -56,17 +61,23 @@ class Scratchpad:
         #   entry["findings"].append({"stage": stage, "payload": payload})
         #   self._flush()
         # =================================================================
-        raise NotImplementedError("Implement log() - see the TODO above.")
+        #raise NotImplementedError("Implement log() - see the TODO above.")
 
     def mark_done(self, claim_id: str) -> None:
+        self._data[claim_id]["status"] = "done" 
+        self._flush()
         # =================================================================
         # TODO (Demo 2): set this claim's status to "done", then flush.
         #   self._data[claim_id]["status"] = "done"
         #   self._flush()
         # =================================================================
-        raise NotImplementedError("Implement mark_done() - see the TODO above.")
+        #raise NotImplementedError("Implement mark_done() - see the TODO above.")
 
     def mark_failed(self, claim_id: str, reason: str) -> None:
+        entry = self._data.setdefault(claim_id, {"findings": []}) 
+        entry["status"] = "failed" 
+        entry["failure_reason"] = reason 
+        self._flush()
         # =================================================================
         # TODO (Demo 2): set status to "failed", record failure_reason, flush.
         #   entry = self._data.setdefault(claim_id, {"findings": []})
@@ -74,7 +85,7 @@ class Scratchpad:
         #   entry["failure_reason"] = reason
         #   self._flush()
         # =================================================================
-        raise NotImplementedError("Implement mark_failed() - see the TODO above.")
+        #raise NotImplementedError("Implement mark_failed() - see the TODO above.")
 
     def _flush(self) -> None:
         """Write to disk after every mutation. Cheap for small batches."""

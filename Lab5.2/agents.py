@@ -55,7 +55,18 @@ INTAKE_SYSTEM = (
 
 
 def run_intake(claim: dict) -> StageResult:
-    """Call Claude to produce a clean structured summary of the claim."""
+    """Call Claude to produce a clean structured summary of the claim.""" 
+    try: 
+        response = _client.messages.create( 
+            model=MODEL_NAME, max_tokens=400, system=INTAKE_SYSTEM, 
+            messages=[{"role": "user", "content": json.dumps(claim)}], 
+        ) 
+        text = "".join(b.text for b in response.content if b.type == "text").strip() 
+        # be forgiving about ```json fences
+        parsed = json.loads(text) 
+        return StageResult(stage="intake", ok=True, data=parsed) 
+    except Exception as exc: 
+        return StageResult(stage="intake", ok=False, error=f"{type(exc).__name__}: {exc}")
     # =====================================================================
     # TODO (Demo 1, subagent 1 of 3): intake - the ONLY stage that calls the
     # API, so the ONLY place a bare `except Exception` is allowed.
@@ -75,7 +86,7 @@ def run_intake(claim: dict) -> StageResult:
     #       return StageResult(stage="intake", ok=False,
     #                          error=f"{type(exc).__name__}: {exc}")
     # =====================================================================
-    raise NotImplementedError("Implement run_intake() - see the TODO above.")
+    #raise NotImplementedError("Implement run_intake() - see the TODO above.")
 
 
 # ---------------------------------------------------------------------------
@@ -84,6 +95,11 @@ def run_intake(claim: dict) -> StageResult:
 
 def run_validation(claim: dict) -> StageResult:
     """Check policy rules. Fail fast and loudly."""
+    if not claim.get("member_active", False): 
+        return StageResult(stage="validation", ok=False, error="member_not_active") 
+    if claim.get("procedure_code") not in COVERED_PROCEDURES: 
+        return StageResult(stage="validation", ok=False, error=f"procedure_not_covered:{claim.get('procedure_code')}") 
+    return StageResult(stage="validation", ok=True, data={"checks_passed": True})
     # =====================================================================
     # TODO (Demo 1, subagent 2 of 3): validation - deterministic, no try/except.
     # Return StageResult(ok=False) with a SHORT, machine-readable error code
@@ -94,7 +110,7 @@ def run_validation(claim: dict) -> StageResult:
     #         error=f"procedure_not_covered:{claim.get('procedure_code')}"
     #   - otherwise: StageResult(ok=True, data={"checks_passed": True})
     # =====================================================================
-    raise NotImplementedError("Implement run_validation() - see the TODO above.")
+    #raise NotImplementedError("Implement run_validation() - see the TODO above.")
 
 
 # ---------------------------------------------------------------------------

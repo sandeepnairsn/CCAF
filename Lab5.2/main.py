@@ -42,6 +42,19 @@ def process_claim(claim: dict, pad: Scratchpad) -> str:
     """
     claim_id = claim["claim_id"]
     print(f"[CLAIM {claim_id}] ", end="", flush=True)
+    stages = [ 
+        ("intake", run_intake), 
+        ("validation", run_validation), 
+        ("adjudication", run_adjudication), 
+    ] 
+    for stage_name, fn in stages: 
+        result = fn(claim) 
+        pad.log(claim_id, stage_name, result.to_dict()) 
+        if not result.ok: 
+            pad.mark_failed(claim_id, f"{stage_name}: {result.error}") 
+            return "failed" 
+        pad.mark_done(claim_id) 
+    return "done"
     # =====================================================================
     # TODO (Demo 3, part 1 of 2): walk the claim through all three stages.
     #
@@ -61,7 +74,7 @@ def process_claim(claim: dict, pad: Scratchpad) -> str:
     #   pad.mark_done(claim_id)       # only after ALL three stages pass
     #   return "done"
     # =====================================================================
-    raise NotImplementedError("Implement process_claim() - see the TODO above.")
+    #raise NotImplementedError("Implement process_claim() - see the TODO above.")
 
 
 def main():
@@ -74,7 +87,11 @@ def main():
 
     for claim in CLAIMS:
         status = pad.status(claim["claim_id"])
-
+        if status in ("done", "failed"): 
+            print(f"[CLAIM {claim['claim_id']}] (already {status}, skipping)") 
+            skipped_count += 1 
+            continue 
+        final = process_claim(claim, pad)
         # =================================================================
         # TODO (Demo 3, part 2 of 2): crash-recovery skip rule.
         # If this claim is already finished, skip it and count it:
